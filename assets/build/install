@@ -1,5 +1,15 @@
 #!/usr/bin/env sh
-set -eu
+set -eux
+
+BUILD_PACKAGES_DEPENDENCIES=php8-pgsql
+apk add --no-cache ${BUILD_PACKAGES_DEPENDENCIES}
+
+curl -SLO https://github.com/phppgadmin/phppgadmin/archive/master.zip
+unzip master.zip
+mv ./phppgadmin-master/* ${WEBROOT_DIR}
+mv ${WEBROOT_DIR}/conf/config.inc.php-dist ${WEBROOT_DIR}/conf/config.inc.php
+chown -R nginx:nginx ${WEBROOT_DIR}
+
 
 PHP_PG_ADMIN_SERVER_DESC=${PHP_PG_ADMIN_SERVER_DESC:-PostgreSQL}
 PHP_PG_ADMIN_SERVER_HOST=${PHP_PG_ADMIN_SERVER_HOST:-}
@@ -27,7 +37,7 @@ PHP_PG_ADMIN_HELP_BASE=${PHP_PG_ADMIN_HELP_BASE:-'http://www.postgresql.org/docs
 PHP_PG_ADMIN_AJAX_REFRESH=${PHP_PG_ADMIN_AJAX_REFRESH:-3}
 
 
-cat ${DOCKAGE_ETC_DIR}/runtime/configs/phppgadmin/config.inc.php | \
+cat ${ETC_DIR}/config.inc.php | \
     sed -e "s#{{PHP_PG_ADMIN_SERVER_DESC}}#$PHP_PG_ADMIN_SERVER_DESC#g" \
         -e "s#{{PHP_PG_ADMIN_SERVER_HOST}}#$PHP_PG_ADMIN_SERVER_HOST#g" \
         -e "s#{{PHP_PG_ADMIN_SERVER_PORT}}#$PHP_PG_ADMIN_SERVER_PORT#g" \
@@ -51,4 +61,7 @@ cat ${DOCKAGE_ETC_DIR}/runtime/configs/phppgadmin/config.inc.php | \
         -e "s#{{PHP_PG_ADMIN_USE_XHTML_STRICT}}#$PHP_PG_ADMIN_USE_XHTML_STRICT#g" \
         -e "s#{{PHP_PG_ADMIN_HELP_BASE}}#$PHP_PG_ADMIN_HELP_BASE#g" \
         -e "s#{{PHP_PG_ADMIN_AJAX_REFRESH}}#$PHP_PG_ADMIN_AJAX_REFRESH#g" \
-        > ${DOCKAGE_WEBROOT_DIR}/conf/config.inc.php
+        > ${WEBROOT_DIR}/conf/config.inc.php
+
+rm -rf master.zip phppgadmin-master
+apk del ${BUILD_PACKAGES_DEPENDENCIES}

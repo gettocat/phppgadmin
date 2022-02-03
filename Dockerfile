@@ -1,15 +1,14 @@
-FROM dockage/alpine-nginx-php-fpm:latest
+FROM trafex/php-nginx
+USER root
 
-LABEL maintainer="Mohammad Abdolirad <m.abdolirad@gmail.com>" \
-    org.label-schema.name="phppgadmin" \
-    org.label-schema.vendor="Dockage" \
-    org.label-schema.description="phpPgAdmin Docker image, phpPgAdmin is a web-based administration tool for PostgreSQL." \
-    org.label-schema.vcs-url="https://github.com/dockage/phppgadmin" \
-    org.label-schema.license="MIT"
+RUN apk add postgresql-dev php-pgsql php8-pgsql
 
-ADD ./assets ${DOCKAGE_ETC_DIR}
 
-RUN apk --no-cache --update add php5-pgsql postgresql \
-    && ${DOCKAGE_ETC_DIR}/buildtime/install \
-    && cp -ar ${DOCKAGE_ETC_DIR}/etc/* /etc \
-    && rm -rf /var/cache/apk/* ${DOCKAGE_ETC_DIR}/etc ${DOCKAGE_ETC_DIR}/buildtime
+ENV WEBROOT_DIR=/var/www/html \
+    DATA_DIR=/data \
+    ETC_DIR=/etc/etc \
+    LOG_DIR=/var/log
+
+ADD ./assets ${ETC_DIR}
+RUN chmod +x ${ETC_DIR}/build/install && ${ETC_DIR}/build/install
+USER nobody
