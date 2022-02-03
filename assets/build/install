@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 set -eux
 
-BUILD_PACKAGES_DEPENDENCIES=php8-pgsql
+
+BUILD_PACKAGES_DEPENDENCIES=php7-pgsql
 apk add --no-cache ${BUILD_PACKAGES_DEPENDENCIES}
 
 curl -SLO https://github.com/phppgadmin/phppgadmin/archive/master.zip
 unzip master.zip
-mv ./phppgadmin-master/* ${WEBROOT_DIR}
-mv ${WEBROOT_DIR}/conf/config.inc.php-dist ${WEBROOT_DIR}/conf/config.inc.php
-chown -R nginx:nginx ${WEBROOT_DIR}
+mv ./phppgadmin-master/* ${WEB_DOCUMENT_ROOT}
+mv ${WEB_DOCUMENT_ROOT}/conf/config.inc.php-dist ${WEB_DOCUMENT_ROOT}/conf/config.inc.php
 
 
 PHP_PG_ADMIN_SERVER_DESC=${PHP_PG_ADMIN_SERVER_DESC:-PostgreSQL}
@@ -61,7 +61,7 @@ cat ${ETC_DIR}/config.inc.php | \
         -e "s#{{PHP_PG_ADMIN_USE_XHTML_STRICT}}#$PHP_PG_ADMIN_USE_XHTML_STRICT#g" \
         -e "s#{{PHP_PG_ADMIN_HELP_BASE}}#$PHP_PG_ADMIN_HELP_BASE#g" \
         -e "s#{{PHP_PG_ADMIN_AJAX_REFRESH}}#$PHP_PG_ADMIN_AJAX_REFRESH#g" \
-        > ${WEBROOT_DIR}/conf/config.inc.php
+        > ${WEB_DOCUMENT_ROOT}/conf/config.inc.php
 
 rm -rf master.zip phppgadmin-master
 apk del ${BUILD_PACKAGES_DEPENDENCIES}
