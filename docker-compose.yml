@@ -3,7 +3,8 @@ version: '2'
 services:
   phppgadmin:
     restart: always
-    image: dockage/phppgadmin:latest
+    build: https://github.com/gettocat/phppgadmin.git
+    image: pgadmin20
     ports:
     - "80:80"
     - "443:443"
