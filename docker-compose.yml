@@ -6,7 +6,7 @@ services:
     build: https://github.com/gettocat/phppgadmin.git
     image: pgadmin20
     ports:
-    - "80:80"
+    - "80:8080"
     - "443:443"
     environment:
     - PHP_PG_ADMIN_SERVER_DESC=PostgreSQL
